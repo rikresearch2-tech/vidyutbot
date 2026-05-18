@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VidyutBot – AI Business Assistant | Built with MeDo</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f3460;--navy-light:#1a4a8a;--gold:#f5a623;
+  --success:#22c55e;--warning:#f59e0b;--danger:#ef4444;
+  --bg:#f8f9fc;--surface:#ffffff;--border:#e5e7eb;
+  --text:#1a1a2e;--text-muted:#6b7280;--text-light:#9ca3af;
+  --radius:12px;--shadow:0 2px 12px rgba(15,52,96,0.08);
+}
+body{font-family:'Sora','Noto Sans Devanagari',sans-serif;background:var(--bg);min-height:100vh;display:flex;flex-direction:column;align-items:center;color:var(--text)}
+
+/* HEADER */
+.header{width:100%;background:var(--navy);padding:14px 24px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(15,52,96,0.25)}
+.logo{width:42px;height:42px;background:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#fff;flex-shrink:0}
+.header-info h1{font-size:17px;font-weight:600;color:#fff}
+.header-info p{font-size:11px;color:#94afd4;margin-top:2px}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.lang-btns{display:flex;gap:6px}
+.lang-btn{background:transparent;border:1px solid rgba(255,255,255,0.25);color:#94afd4;font-size:11px;font-weight:600;padding:5px 14px;border-radius:20px;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s}
+.lang-btn.active{background:var(--gold);border-color:var(--gold);color:#fff}
+.ai-badge{font-size:10px;color:#fff;background:rgba(245,166,35,0.2);border:1px solid rgba(245,166,35,0.4);border-radius:20px;padding:4px 10px;display:flex;align-items:center;gap:5px}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* LAYOUT */
+.main{width:100%;max-width:1120px;display:grid;grid-template-columns:300px 1fr;height:calc(100vh - 72px);padding:16px;gap:16px}
+.sidebar{display:flex;flex-direction:column;gap:12px;overflow-y:auto;padding-right:2px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.card-title{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.card-title-left{display:flex;align-items:center;gap:6px}
+
+/* INVENTORY ITEMS */
+.inv-item{display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:8px;border-bottom:1px solid var(--border);transition:background 0.15s}
+.inv-item:last-child{border-bottom:none}
+.inv-item:hover{background:#f9fafb}
+.inv-emoji{font-size:22px;width:32px;text-align:center;flex-shrink:0}
+.inv-info{flex:1;min-width:0}
+.inv-name{font-size:13px;font-weight:500;color:var(--text);line-height:1.2}
+.inv-price{font-size:10px;color:var(--text-light)}
+.inv-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.inv-qty{font-size:13px;font-weight:600;color:var(--text-muted)}
+.inv-status{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px}
+.s-ok{background:#dcfce7;color:#16a34a}
+.s-low{background:#fef9c3;color:#a16207}
+.s-crit{background:#fee2e2;color:#dc2626}
+.inv-edit{background:none;border:none;cursor:pointer;color:var(--text-light);font-size:13px;padding:2px 4px;line-height:1}
+.inv-edit:hover{color:var(--navy)}
+
+/* ADD ITEM BTN */
+.add-item-btn{width:100%;background:transparent;border:1.5px dashed var(--border);border-radius:8px;padding:9px;font-size:12px;font-family:'Sora',sans-serif;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;transition:all 0.2s}
+.add-item-btn:hover{border-color:var(--navy);color:var(--navy);background:#f0f4ff}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat-box{background:#f8f9fc;border-radius:8px;padding:10px;text-align:center}
+.stat-val{font-size:18px;font-weight:600;color:var(--navy)}
+.stat-label{font-size:10px;color:var(--text-muted);margin-top:2px}
+
+/* QUICK ACTIONS */
+.qa-btn{width:100%;background:#f8f9fc;border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:12px;font-family:'Sora','Noto Sans Devanagari',sans-serif;color:var(--text);cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;transition:all 0.15s;margin-bottom:6px}
+.qa-btn:last-child{margin-bottom:0}
+.qa-btn:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+/* MEDO CARD */
+.medo-card{background:linear-gradient(135deg,var(--navy),#1e3a6e);border-radius:var(--radius);padding:16px;color:#fff;text-align:center}
+.medo-card p{font-size:11px;color:#94afd4;margin-bottom:4px}
+.medo-card strong{font-size:13px}
+.medo-tag{display:inline-block;background:var(--gold);color:#fff;font-size:10px;font-weight:600;border-radius:10px;padding:3px 10px;margin-top:8px}
+
+/* CHAT */
+.chat-panel{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.chat-topbar{background:#f8f9fc;border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:10px}
+.online-dot{width:8px;height:8px;border-radius:50%;background:var(--success);animation:pulse 2s infinite}
+.chat-topbar-name{font-size:13px;font-weight:500;color:var(--text)}
+.groq-tag{font-size:10px;background:#e8f4fd;color:#1a73e8;border-radius:10px;padding:3px 8px;font-weight:600;margin-left:8px}
+.chat-topbar-lang{font-size:11px;color:var(--text-muted);margin-left:auto}
+
+.messages{flex:1;overflow-y:auto;padding:20px 16px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+.msg{display:flex;gap:10px;align-items:flex-start;animation:fadeUp 0.25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{flex-direction:row-reverse}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0}
+.avatar.bot{background:var(--navy);color:var(--gold)}
+.avatar.user{background:var(--gold);color:#fff}
+.bubble{max-width:74%;padding:11px 15px;border-radius:14px;font-size:13.5px;line-height:1.7}
+.msg.bot .bubble{background:#f3f6fb;color:var(--text);border-bottom-left-radius:4px;border:1px solid var(--border)}
+.msg.user .bubble{background:var(--navy);color:#fff;border-bottom-right-radius:4px}
+.typing-msg{display:flex;gap:10px;align-items:flex-start}
+.typing-bubble{background:#f3f6fb;border:1px solid var(--border);border-radius:14px;border-bottom-left-radius:4px;padding:14px 16px;display:flex;gap:5px;align-items:center}
+.typing-dot{width:7px;height:7px;border-radius:50%;background:var(--text-muted);animation:typingAnim 1.2s infinite}
+.typing-dot:nth-child(2){animation-delay:0.2s}
+.typing-dot:nth-child(3){animation-delay:0.4s}
+@keyframes typingAnim{0%,80%,100%{opacity:0.2;transform:scale(0.8)}40%{opacity:1;transform:scale(1)}}
+
+.chips{padding:10px 16px;display:flex;gap:6px;flex-wrap:wrap;border-top:1px solid var(--border);background:#fafafa}
+.chip{background:#fff;border:1px solid var(--border);border-radius:20px;padding:6px 13px;font-size:11.5px;color:var(--text-muted);cursor:pointer;font-family:'Sora','Noto Sans Devanagari',sans-serif;transition:all 0.15s;white-space:nowrap}
+.chip:hover{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+.input-row{display:flex;gap:8px;padding:14px 16px;border-top:1px solid var(--border)}
+#chatInput{flex:1;border:1.5px solid var(--border);border-radius:10px;padding:10px 16px;font-size:13px;font-family:'Sora','Noto Sans Devanagari',sans-serif;color:var(--text);background:var(--bg);outline:none;transition:border-color 0.2s}
+#chatInput:focus{border-color:var(--navy)}
+#chatInput:disabled{opacity:0.6}
+.send-btn{background:var(--navy);border:none;border-radius:10px;width:42px;height:42px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s}
+.send-btn:hover{background:var(--navy-light)}
+.send-btn:disabled{background:#ccc;cursor:not-allowed}
+.send-btn svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:999}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;padding:24px;width:340px;box-shadow:0 8px 40px rgba(0,0,0,0.2);max-height:90vh;overflow-y:auto}
+.modal h3{font-size:16px;margin-bottom:16px;color:var(--navy)}
+.modal label{font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px;margin-top:12px;font-weight:500}
+.modal input,.modal select{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:'Sora',sans-serif;outline:none;transition:border-color 0.2s}
+.modal input:focus,.modal select:focus{border-color:var(--navy)}
+.emoji-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:6px}
+.emoji-opt{font-size:20px;text-align:center;padding:6px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all 0.15s}
+.emoji-opt:hover{background:#f0f4ff}
+.emoji-opt.selected{border-color:var(--navy);background:#f0f4ff}
+.modal-btns{display:flex;gap:8px;margin-top:18px}
+.btn-primary{flex:1;background:var(--navy);color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-family:'Sora',sans-serif;cursor:pointer;font-weight:500}
+.btn-secondary{flex:1;background:#f3f4f6;color:var(--text-muted);border:none;border-radius:8px;padding:10px;font-size:13px;font-family:'Sora',sans-serif;cursor:pointer}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+@media(max-width:700px){.main{grid-template-columns:1fr;height:auto}.sidebar{display:none}.chat-panel{height:calc(100vh - 72px)}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">V</div>
+  <div class="header-info">
+    <h1>VidyutBot</h1>
+    <p id="hdr-sub">AI Business Assistant — Powered by MeDo &amp; Groq AI</p>
+  </div>
+  <div class="header-right">
+    <div class="lang-btns">
+      <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+      <button class="lang-btn" onclick="setLang('hi',this)">हि</button>
+    </div>
+    <div class="ai-badge"><div class="ai-dot"></div><span id="hdr-ai">Groq AI Live</span></div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- INVENTORY -->
+    <div class="card">
+      <div class="card-title">
+        <div class="card-title-left"><span>📦</span><span id="lbl-inventory">Live Inventory</span></div>
+      </div>
+      <div id="invList"></div>
+      <button class="add-item-btn" onclick="openAddModal()" id="btn-add-item">➕ Add New Item</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-left"><span>📊</span><span id="lbl-stats">Today's Stats</span></div></div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-val">₹3,840</div><div class="stat-label" id="lbl-revenue">Revenue</div></div>
+        <div class="stat-box"><div class="stat-val">47</div><div class="stat-label" id="lbl-customers">Customers</div></div>
+        <div class="stat-box"><div class="stat-val">61</div><div class="stat-label" id="lbl-orders">Orders</div></div>
+        <div class="stat-box"><div class="stat-val">₹82</div><div class="stat-label" id="lbl-avg">Avg. Basket</div></div>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div class="card">
+      <div class="card-title"><div class="card-title-left"><span>⚡</span><span id="lbl-quick">Quick Actions</span></div></div>
+      <div id="qaButtons"></div>
+    </div>
+
+    <!-- MEDO -->
+    <div class="medo-card">
+      <p id="lbl-powered">Powered by</p>
+      <strong>MeDo Platform by Baidu</strong><br/>
+      <div class="medo-tag">Build with MeDo Hackathon 2026</div>
+    </div>
+
+  </aside>
+
+  <!-- CHAT -->
+  <section class="chat-panel">
+    <div class="chat-topbar">
+      <div class="online-dot"></div>
+      <p class="chat-topbar-name" id="lbl-online">VidyutBot is online</p>
+      <span class="groq-tag">🤖 Llama 3.3 · Groq</span>
+      <span class="chat-topbar-lang" id="lbl-bilingual">Hindi + English</span>
+    </div>
+    <div class="messages" id="messages"></div>
+    <div class="chips" id="chipBar"></div>
+    <div class="input-row">
+      <input type="text" id="chatInput" placeholder="Ask anything in Hindi or English..." autocomplete="off"/>
+      <button class="send-btn" id="sendBtn" onclick="handleSend()">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </section>
+</div>
+
+<!-- EDIT STOCK MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3 id="edit-title">Update Stock</h3>
+    <label id="edit-lbl-item">Item</label>
+    <input type="text" id="modalItem" readonly/>
+    <label id="edit-lbl-qty">New Quantity (kg)</label>
+    <input type="number" id="modalQty" min="0"/>
+    <label id="edit-lbl-price">Price per kg (₹)</label>
+    <input type="number" id="modalPrice" min="0"/>
+    <div class="modal-btns">
+      <button class="btn-secondary" id="edit-cancel" onclick="closeEdit()">Cancel</button>
+      <button class="btn-primary" id="edit-save" onclick="saveEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ITEM MODAL -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <h3 id="add-title">Add New Item</h3>
+    <label id="add-lbl-emoji">Choose Emoji Icon</label>
+    <div class="emoji-grid" id="emojiGrid"></div>
+    <div class="row2">
+      <div>
+        <label id="add-lbl-nameEn">Name (English)</label>
+        <input type="text" id="addNameEn" placeholder="e.g. Cabbage"/>
+      </div>
+      <div>
+        <label id="add-lbl-nameHi">नाम (हिंदी)</label>
+        <input type="text" id="addNameHi" placeholder="जैसे पत्तागोभी"/>
+      </div>
+    </div>
+    <div class="row2">
+      <div>
+        <label id="add-lbl-qty">Quantity (kg)</label>
+        <input type="number" id="addQty" min="0" value="10"/>
+      </div>
+      <div>
+        <label id="add-lbl-price">Price/kg (₹)</label>
+        <input type="number" id="addPrice" min="0" value="30"/>
+      </div>
+    </div>
+    <div class="row2">
+      <div>
+        <label id="add-lbl-low">Low Alert (kg)</label>
+        <input type="number" id="addLow" min="0" value="8"/>
+      </div>
+      <div>
+        <label id="add-lbl-crit">Critical Alert (kg)</label>
+        <input type="number" id="addCrit" min="0" value="3"/>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-secondary" id="add-cancel" onclick="closeAdd()">Cancel</button>
+      <button class="btn-primary" id="add-save" onclick="saveAdd()">Add Item</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════
+const GROQ_KEY   = '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';
+const GROQ_URL   = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_MODEL = 'llama-3.3-70b-versatile';
+
+// ═══════════════════════════════════════
+//  TRANSLATIONS
+// ═══════════════════════════════════════
+const T = {
+  en: {
+    'hdr-sub'       : 'AI Business Assistant — Powered by MeDo &amp; Groq AI',
+    'hdr-ai'        : 'Groq AI Live',
+    'lbl-inventory' : 'Live Inventory',
+    'lbl-stats'     : "Today's Stats",
+    'lbl-revenue'   : 'Revenue',
+    'lbl-customers' : 'Customers',
+    'lbl-orders'    : 'Orders',
+    'lbl-avg'       : 'Avg. Basket',
+    'lbl-quick'     : 'Quick Actions',
+    'lbl-powered'   : 'Powered by',
+    'lbl-online'    : 'VidyutBot is online',
+    'lbl-bilingual' : 'Hindi + English',
+    'btn-add-item'  : '➕ Add New Item',
+    'edit-title'    : 'Update Stock',
+    'edit-lbl-item' : 'Item',
+    'edit-lbl-qty'  : 'New Quantity (kg)',
+    'edit-lbl-price': 'Price per kg (₹)',
+    'edit-cancel'   : 'Cancel',
+    'edit-save'     : 'Save',
+    'add-title'     : 'Add New Item',
+    'add-lbl-emoji' : 'Choose Emoji Icon',
+    'add-lbl-nameEn': 'Name (English)',
+    'add-lbl-nameHi': 'नाम (हिंदी)',
+    'add-lbl-qty'   : 'Quantity (kg)',
+    'add-lbl-price' : 'Price/kg (₹)',
+    'add-lbl-low'   : 'Low Alert (kg)',
+    'add-lbl-crit'  : 'Critical Alert (kg)',
+    'add-cancel'    : 'Cancel',
+    'add-save'      : 'Add Item',
+    placeholder     : 'Ask anything in Hindi or English...',
+    statusOk        : 'OK',
+    statusLow       : 'Low',
+    statusCrit      : 'Critical',
+  },
+  hi: {
+    'hdr-sub'       : 'AI बिज़नेस असिस्टेंट — MeDo और Groq AI द्वारा',
+    'hdr-ai'        : 'Groq AI लाइव',
+    'lbl-inventory' : 'लाइव स्टॉक',
+    'lbl-stats'     : 'आज का हिसाब',
+    'lbl-revenue'   : 'कमाई',
+    'lbl-customers' : 'ग्राहक',
+    'lbl-orders'    : 'ऑर्डर',
+    'lbl-avg'       : 'औसत खरीद',
+    'lbl-quick'     : 'त्वरित कार्य',
+    'lbl-powered'   : 'द्वारा संचालित',
+    'lbl-online'    : 'VidyutBot ऑनलाइन है',
+    'lbl-bilingual' : 'हिंदी + English',
+    'btn-add-item'  : '➕ नया आइटम जोड़ें',
+    'edit-title'    : 'स्टॉक अपडेट करें',
+    'edit-lbl-item' : 'आइटम',
+    'edit-lbl-qty'  : 'नई मात्रा (kg)',
+    'edit-lbl-price': 'कीमत प्रति kg (₹)',
+    'edit-cancel'   : 'रद्द करें',
+    'edit-save'     : 'सेव करें',
+    'add-title'     : 'नया आइटम जोड़ें',
+    'add-lbl-emoji' : 'इमोजी चुनें',
+    'add-lbl-nameEn': 'नाम (English)',
+    'add-lbl-nameHi': 'नाम (हिंदी)',
+    'add-lbl-qty'   : 'मात्रा (kg)',
+    'add-lbl-price' : 'कीमत/kg (₹)',
+    'add-lbl-low'   : 'कम स्टॉक अलर्ट (kg)',
+    'add-lbl-crit'  : 'गंभीर अलर्ट (kg)',
+    'add-cancel'    : 'रद्द करें',
+    'add-save'      : 'जोड़ें',
+    placeholder     : 'हिंदी या English में कुछ भी पूछें...',
+    statusOk        : 'ठीक',
+    statusLow       : 'कम',
+    statusCrit      : 'गंभीर',
+  }
+};
+
+// ═══════════════════════════════════════
+//  CHIPS & QUICK ACTIONS DATA
+// ═══════════════════════════════════════
+const CHIPS = {
+  en: [
+    {label:'📦 Inventory',    q:'Check all inventory status'},
+    {label:'📊 Summary',      q:'Show me today complete sales summary'},
+    {label:'⚠️ Low Stock',    q:'Which items are critically low on stock?'},
+    {label:'🚚 Delivery',     q:'What is the delivery policy?'},
+    {label:'💰 Prices',       q:'Show me all item prices'},
+    {label:'💡 Growth Tips',  q:'Give me 3 tips to grow my shop business'},
+  ],
+  hi: [
+    {label:'📦 स्टॉक',         q:'सभी सामान का स्टॉक बताओ'},
+    {label:'📊 आज की रिपोर्ट',  q:'आज का पूरा सारांश दो'},
+    {label:'⚠️ कम स्टॉक',      q:'कौन सा सामान कम है?'},
+    {label:'🚚 डिलीवरी',        q:'डिलीवरी की जानकारी दो'},
+    {label:'💰 भाव',            q:'सभी सामान की कीमत बताओ'},
+    {label:'💡 बिज़नेस टिप्स',   q:'दुकान की बिक्री बढ़ाने के 3 तरीके बताओ'},
+  ]
+};
+
+const QA = {
+  en: [
+    {icon:'📊', label:'Daily Summary',    q:'Show me today complete sales summary'},
+    {icon:'⚠️', label:'Low Stock Alert',  q:'Which items are critically low on stock?'},
+    {icon:'🕒', label:'Shop Info',         q:'What are the shop timings and contact?'},
+    {icon:'🏆', label:'Best Seller',       q:'What was the best selling item today?'},
+    {icon:'💡', label:'Business Tips',     q:'Give me 3 tips to increase my vegetable shop sales'},
+  ],
+  hi: [
+    {icon:'📊', label:'दैनिक रिपोर्ट',      q:'आज का पूरा सारांश दो'},
+    {icon:'⚠️', label:'कम स्टॉक अलर्ट',    q:'कौन सा सामान कम है?'},
+    {icon:'🕒', label:'दुकान की जानकारी',   q:'दुकान का समय और नंबर बताओ'},
+    {icon:'🏆', label:'सबसे ज्यादा बिका',   q:'आज सबसे ज्यादा क्या बिका?'},
+    {icon:'💡', label:'बिज़नेस टिप्स',      q:'दुकान की बिक्री बढ़ाने के 3 तरीके बताओ'},
+  ]
+};
+
+// ═══════════════════════════════════════
+//  INVENTORY DATA
+// ═══════════════════════════════════════
+const inventory = {
+  onions:   {emoji:'🧅', name:'Onions',   nameHi:'प्याज',   qty:42, unit:'kg', price:25,  low:10, critical:5},
+  tomatoes: {emoji:'🍅', name:'Tomatoes', nameHi:'टमाटर',  qty:28, unit:'kg', price:40,  low:15, critical:8},
+  potatoes: {emoji:'🥔', name:'Potatoes', nameHi:'आलू',    qty:12, unit:'kg', price:20,  low:15, critical:5},
+  garlic:   {emoji:'🧄', name:'Garlic',   nameHi:'लहसुन',  qty:3,  unit:'kg', price:120, low:8,  critical:3},
+  ginger:   {emoji:'🌿', name:'Ginger',   nameHi:'अदरक',   qty:18, unit:'kg', price:80,  low:10, critical:4},
+  chillies: {emoji:'🌶️', name:'Chillies', nameHi:'मिर्च',  qty:9,  unit:'kg', price:90,  low:5,  critical:2},
+};
+
+const EMOJI_LIST = ['🧅','🍅','🥔','🧄','🌿','🌶️','🥬','🥦','🫑','🥕','🌽','🍆','🫘','🥜','🍋','🍊','🍎','🍇','🫛','🌰','🥝','🍈','🧆','🫙','🥒','🍠','🌱','🪴','🫚','🥗'];
+
+const shopInfo = {
+  name:'Ramesh Kirana & Vegetables',
+  timings:'Mon–Sat 7:00 AM – 9:00 PM, Sun 8:00 AM – 1:00 PM',
+  phone:'9876543210',
+  delivery:'Free delivery above ₹200 within 2 km',
+  upi:'ramesh@upi',
+};
+
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let currentLang = 'en';
+let editingKey  = null;
+let selectedEmoji = '🥬';
+let chatHistory = [];
+let isLoading   = false;
+
+// ═══════════════════════════════════════
+//  LANGUAGE SYSTEM
+// ═══════════════════════════════════════
+function applyLang(l){
+  Object.entries(T[l]).forEach(([id, val])=>{
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = val;
+  });
+  document.getElementById('chatInput').placeholder = T[l].placeholder;
+  renderInventory();
+  renderChips(l);
+  renderQA(l);
+}
+
+function setLang(l, btn){
+  currentLang = l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyLang(l);
+}
+
+// ═══════════════════════════════════════
+//  INVENTORY RENDER
+// ═══════════════════════════════════════
+function getStatus(item){
+  const t = T[currentLang];
+  if(item.qty <= item.critical) return {label:t.statusCrit, cls:'s-crit', color:'#ef4444'};
+  if(item.qty <= item.low)      return {label:t.statusLow,  cls:'s-low',  color:'#f59e0b'};
+  return                               {label:t.statusOk,   cls:'s-ok',   color:'#22c55e'};
+}
+
+function renderInventory(){
+  const el = document.getElementById('invList');
+  el.innerHTML = '';
+  Object.entries(inventory).forEach(([key, item])=>{
+    const s = getStatus(item);
+    const displayName = currentLang === 'hi' ? item.nameHi : item.name;
+    const d = document.createElement('div');
+    d.className = 'inv-item';
+    d.innerHTML = `
+      <div class="inv-emoji">${item.emoji}</div>
+      <div class="inv-info">
+        <div class="inv-name">${displayName}</div>
+        <div class="inv-price">₹${item.price}/kg</div>
+      </div>
+      <div class="inv-right">
+        <span class="inv-qty">${item.qty}kg</span>
+        <span class="inv-status ${s.cls}">${s.label}</span>
+        <button class="inv-edit" onclick="openEdit('${key}')" title="Edit">✏️</button>
+      </div>`;
+    el.appendChild(d);
+  });
+}
+
+// ═══════════════════════════════════════
+//  CHIPS & QA
+// ═══════════════════════════════════════
+function renderChips(l){
+  const bar = document.getElementById('chipBar');
+  bar.innerHTML = CHIPS[l].map(c=>`<button class="chip" onclick="fireChip('${c.q}')">${c.label}</button>`).join('');
+}
+
+function renderQA(l){
+  const el = document.getElementById('qaButtons');
+  el.innerHTML = QA[l].map(c=>`<button class="qa-btn" onclick="fireChip('${c.q}')"><span>${c.icon}</span>${c.label}</button>`).join('');
+}
+
+// ═══════════════════════════════════════
+//  EDIT MODAL
+// ═══════════════════════════════════════
+function openEdit(key){
+  editingKey = key;
+  const item = inventory[key];
+  const t = T[currentLang];
+  document.getElementById('edit-title').textContent    = t['edit-title'];
+  document.getElementById('edit-lbl-item').textContent = t['edit-lbl-item'];
+  document.getElementById('edit-lbl-qty').textContent  = t['edit-lbl-qty'];
+  document.getElementById('edit-lbl-price').textContent= t['edit-lbl-price'];
+  document.getElementById('edit-cancel').textContent   = t['edit-cancel'];
+  document.getElementById('edit-save').textContent     = t['edit-save'];
+  document.getElementById('modalItem').value  = currentLang==='hi' ? item.nameHi : item.name;
+  document.getElementById('modalQty').value   = item.qty;
+  document.getElementById('modalPrice').value = item.price;
+  document.getElementById('editModal').classList.add('open');
+}
+function closeEdit(){
+  document.getElementById('editModal').classList.remove('open');
+  editingKey = null;
+}
+function saveEdit(){
+  if(!editingKey) return;
+  const qty   = parseFloat(document.getElementById('modalQty').value);
+  const price = parseFloat(document.getElementById('modalPrice').value);
+  if(isNaN(qty)||qty<0){alert('Enter valid quantity');return}
+  inventory[editingKey].qty   = qty;
+  inventory[editingKey].price = price;
+  renderInventory();
+  const item = inventory[editingKey];
+  closeEdit();
+  const s = getStatus(item);
+  const nm = currentLang==='hi' ? item.nameHi : item.name;
+  let extra = '';
+  if(s.cls==='s-crit') extra = currentLang==='hi' ? '<br>🔴 <b>गंभीर! तुरंत ऑर्डर करें!</b>' : '<br>🔴 <b>Critical! Reorder immediately!</b>';
+  else if(s.cls==='s-low') extra = currentLang==='hi' ? '<br>🟡 स्टॉक कम है, जल्द मंगाएं।' : '<br>🟡 Stock getting low, consider reordering.';
+  directReply(currentLang==='hi'
+    ? `✅ <b>${nm}</b> का स्टॉक अपडेट हो गया! अब <b>${qty} kg</b> उपलब्ध है।${extra}`
+    : `✅ <b>${nm}</b> stock updated! Now <b>${qty} kg</b> available.${extra}`);
+}
+document.getElementById('editModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeEdit()});
+
+// ═══════════════════════════════════════
+//  ADD ITEM MODAL
+// ═══════════════════════════════════════
+function openAddModal(){
+  selectedEmoji = '🥬';
+  renderEmojiGrid();
+  document.getElementById('addNameEn').value = '';
+  document.getElementById('addNameHi').value = '';
+  document.getElementById('addQty').value    = 10;
+  document.getElementById('addPrice').value  = 30;
+  document.getElementById('addLow').value    = 8;
+  document.getElementById('addCrit').value   = 3;
+  // apply lang to modal labels
+  const t = T[currentLang];
+  ['add-title','add-lbl-emoji','add-lbl-nameEn','add-lbl-nameHi',
+   'add-lbl-qty','add-lbl-price','add-lbl-low','add-lbl-crit','add-cancel','add-save']
+    .forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.innerHTML=t[id]||el.innerHTML;
+    });
+  document.getElementById('addModal').classList.add('open');
+}
+function closeAdd(){document.getElementById('addModal').classList.remove('open')}
+function renderEmojiGrid(){
+  const grid = document.getElementById('emojiGrid');
+  grid.innerHTML = EMOJI_LIST.map(e=>`
+    <div class="emoji-opt${e===selectedEmoji?' selected':''}" onclick="selectEmoji('${e}')">${e}</div>
+  `).join('');
+}
+function selectEmoji(e){
+  selectedEmoji = e;
+  renderEmojiGrid();
+}
+function saveAdd(){
+  const nameEn = document.getElementById('addNameEn').value.trim();
+  const nameHi = document.getElementById('addNameHi').value.trim();
+  const qty    = parseFloat(document.getElementById('addQty').value);
+  const price  = parseFloat(document.getElementById('addPrice').value);
+  const low    = parseFloat(document.getElementById('addLow').value);
+  const crit   = parseFloat(document.getElementById('addCrit').value);
+  if(!nameEn||!nameHi||isNaN(qty)||isNaN(price)){
+    alert(currentLang==='hi'?'कृपया सभी जानकारी भरें':'Please fill all fields');return;
+  }
+  const key = nameEn.toLowerCase().replace(/\s+/g,'_')+'_'+Date.now();
+  inventory[key] = {emoji:selectedEmoji, name:nameEn, nameHi:nameHi, qty, unit:'kg', price, low, critical:crit};
+  renderInventory();
+  closeAdd();
+  const s = getStatus(inventory[key]);
+  directReply(currentLang==='hi'
+    ? `✅ <b>${selectedEmoji} ${nameHi}</b> को स्टॉक में जोड़ा गया!<br>मात्रा: <b>${qty} kg</b> @ ₹${price}/kg<br>अब यह AI चैट में भी काम करेगा! 🤖`
+    : `✅ <b>${selectedEmoji} ${nameEn}</b> added to inventory!<br>Quantity: <b>${qty} kg</b> @ ₹${price}/kg<br>It's now live in AI chat too! 🤖`);
+}
+document.getElementById('addModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAdd()});
+
+// ═══════════════════════════════════════
+//  GROQ AI
+// ═══════════════════════════════════════
+function buildSystemPrompt(){
+  const inv = Object.values(inventory).map(i=>{
+    const s = getStatus(i);
+    return `  - ${i.name} (${i.nameHi}) ${i.emoji}: ${i.qty}kg @ ₹${i.price}/kg [${s.label==='OK'||s.label==='ठीक'?'OK':s.label==='Low'||s.label==='कम'?'Low':'Critical'}]`;
+  }).join('\n');
+
+  return `You are VidyutBot, a smart AI business assistant for small shop owners in India, built on Baidu's MeDo Platform for the "Build with MeDo Hackathon 2026" by Team Vidyut.
+
+SHOP: ${shopInfo.name}
+TIMINGS: ${shopInfo.timings}
+PHONE: ${shopInfo.phone}
+DELIVERY: ${shopInfo.delivery}
+UPI: ${shopInfo.upi}
+
+CURRENT LIVE INVENTORY:
+${inv}
+
+TODAY'S SALES:
+- Revenue: ₹3,840 (+12% vs yesterday) | Customers: 47 | Orders: 61 | Avg Basket: ₹82
+- Best seller: Tomatoes (15 kg)
+
+STOCK ALERTS:
+${Object.values(inventory).filter(i=>i.qty<=i.critical).map(i=>`- 🔴 CRITICAL: ${i.name} only ${i.qty}kg left!`).join('\n')||'None critical'}
+${Object.values(inventory).filter(i=>i.qty>i.critical&&i.qty<=i.low).map(i=>`- 🟡 LOW: ${i.name} ${i.qty}kg`).join('\n')||''}
+
+RULES:
+- Warm, helpful, concise (under 150 words unless user asks for detail)
+- CRITICAL: If user writes in Hindi (Devanagari) → reply ONLY in Hindi
+- If English → reply in English. If Hinglish → match dominant language
+- You can answer ANY business question: inventory, sales, tips, pricing, GST, profit, customer handling etc.
+- When mentioning items, use their emoji too
+- You know about ALL items in inventory including any newly added ones`;
+}
+
+async function callGroq(userText){
+  const messages = [{role:'system', content:buildSystemPrompt()}];
+  chatHistory.forEach(m=>messages.push({role:m.role==='bot'?'assistant':'user', content:m.text}));
+  messages.push({role:'user', content:userText});
+
+  const res = await fetch(GROQ_URL,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
+    body:JSON.stringify({model:GROQ_MODEL, messages, temperature:0.75, max_tokens:400})
+  });
+  if(!res.ok){const e=await res.json();throw new Error(e.error?.message||'API error '+res.status)}
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content || 'Sorry, no response.';
+}
+
+// ═══════════════════════════════════════
+//  CHAT UI
+// ═══════════════════════════════════════
+function addMsg(role, html){
+  const msgs = document.getElementById('messages');
+  const d = document.createElement('div');
+  d.className = 'msg '+role;
+  d.innerHTML = `<div class="avatar ${role}">${role==='user'?'U':'V'}</div><div class="bubble">${html}</div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function showTyping(){
+  const msgs = document.getElementById('messages');
+  const d = document.createElement('div');
+  d.id='typing'; d.className='typing-msg';
+  d.innerHTML=`<div class="avatar bot">V</div><div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove()}
+function directReply(html){showTyping();setTimeout(()=>{removeTyping();addMsg('bot',html)},500)}
+function setLoading(v){isLoading=v;document.getElementById('chatInput').disabled=v;document.getElementById('sendBtn').disabled=v}
+
+async function handleSend(){
+  const inp = document.getElementById('chatInput');
+  const text = inp.value.trim();
+  if(!text||isLoading) return;
+  inp.value='';
+  addMsg('user',text);
+  chatHistory.push({role:'user',text});
+  setLoading(true);
+  showTyping();
+  try{
+    const reply = await callGroq(text);
+    removeTyping();
+    const html = reply.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/\*(.*?)\*/g,'<i>$1</i>').replace(/\n/g,'<br>');
+    addMsg('bot',html);
+    chatHistory.push({role:'bot',text:reply});
+    if(chatHistory.length>20) chatHistory=chatHistory.slice(-20);
+  }catch(e){
+    removeTyping();
+    addMsg('bot',`❌ ${e.message}`);
+  }
+  setLoading(false);
+  inp.focus();
+}
+
+function fireChip(text){document.getElementById('chatInput').value=text;handleSend()}
+document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')handleSend()});
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+applyLang('en');
+setTimeout(()=>{
+  addMsg('bot',
+    `Namaste! 🙏 I'm <b>VidyutBot</b> — your AI business assistant built on <b>Baidu's MeDo Platform</b>.<br><br>
+Running on <b>Groq AI (Llama 3.3)</b> — ask me <i>anything</i> in <b>Hindi या English</b>!<br><br>
+Try: inventory check, sales report, business tips, or switch to हि to chat in Hindi. 🚀`
+  );
+},300);
+</script>
+</body>
+</html>
